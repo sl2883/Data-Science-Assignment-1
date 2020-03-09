@@ -224,7 +224,7 @@ if __name__ == '__main__':
         save_file(joined_df, output_filename_arg, csv_format)
 
     # joined_df = create_dataframe("joined.csv", csv_format, spark)
-   
+
     calculate_statistics(joined_df)
 
     # Stop spark session 
