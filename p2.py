@@ -1,5 +1,5 @@
 import pickle
-
+import csv
 import math
 import pandas as pd
 import matplotlib.pyplot as plt
@@ -50,8 +50,8 @@ def assignment_part_2():
     # df2.info()
     # msno.bar(df2)
 
-    # column_name = "perceived_average_screen_time"
-    column_name = "actual_average_screen_time"
+    column_name = "perceived_average_screen_time"
+    # column_name = "actual_average_screen_time"
 
     fig, axes = plt.subplots(1, 5)
 
@@ -103,7 +103,7 @@ def assignment_part_2():
     axes[1].set_title("Mean = %.1f" % column_name_mean)
     axes[2].set_title("Median = %.1f" % column_name_median)
     axes[3].set_title("Rand = %.1f" % column_name_random)
-    axes[3].set_title("Normal")
+    axes[4].set_title("Normal")
 
     ttest_mean = scipy.stats.ttest_ind(df_normal["val"], df_mean[column_name])
     ttest_median = scipy.stats.ttest_ind(df_normal["val"], df_median[column_name])
@@ -230,14 +230,21 @@ def create_dataframe(filepath, format, spark):
      return spark_df
 
 def assignment_viz():
-    spark = SparkSession.builder.getOrCreate()
-    df = create_dataframe('weather.csv', 'csv', spark)
-    print(df)
+
+   # extrasensory_sensor_data = pickle.load(open("Extrasensory_sensor_data.p", "rb"))
+   # df = pd.concat(extrasensory_sensor_data)
+   #
+   # compression_opts = dict(method='zip', archive_name='out.csv')
+   # df.to_csv('out1.csv', index=False)
+   extrasensory_individual_data = pickle.load(open("Extrasensory_individual_data.p", "rb"))
+   df = pd.DataFrame(extrasensory_individual_data)
+
+   df.to_csv('out2.csv', index=False)
 
 if __name__ == '__main__':
     # assignment_part_2()
     # assignment_part_3()
-    # assignment_part_4()
+    # assignment_part_4_A()
     # assignment_part_4_B()
     assignment_viz()
 

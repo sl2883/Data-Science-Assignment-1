@@ -3,7 +3,7 @@ import sys
 from pyspark.sql import SparkSession, SQLContext
 import pyspark.sql.functions as F
 from pyspark.sql.types import IntegerType, StringType
-
+import pandas as pd
 def create_dataframe(filepath, format, spark):
     """
     Create a spark df given a filepath and format.
@@ -187,10 +187,12 @@ def save_file(df, path, format):
 
 
 def save_all_test_file(nhis_df, nhis_file_arg, csv_format, brfss_df, brfss_file_arg, json_format):
-    test_nhis_df = nhis_df.select("*").limit(100)
+    test_nhis_df = nhis_df.select("*").limit(5)
     save_test_file(test_nhis_df, nhis_file_arg, csv_format)
-    test_brfss_df = brfss_df.select("*").limit(100)
+    test_brfss_df = brfss_df.select("*").limit(5)
     save_test_file(test_brfss_df, brfss_file_arg, json_format)
+
+    return test_nhis_df, test_brfss_df
 
 if __name__ == '__main__':
 
@@ -212,8 +214,15 @@ if __name__ == '__main__':
     nhis_df = create_dataframe(nhis_file_arg, csv_format, spark)
     brfss_df = create_dataframe(brfss_file_arg, json_format, spark)
 
+    pd.set_option('display.max_columns', None)
+    pd.set_option('display.max_rows', None)
+
+    # nhis_df.where(nhis_df["DIBEV1"] == 1).groupBy("AGE_P").count().show(68)
+    # nhis_df.groupBy("AGE_P").count().show(68)
+
     # Uncoment this to create test files again
-    # save_all_test_file(nhis_df, nhis_file_arg, csv_format, brfss_df, brfss_file_arg, json_format)
+    if output_filename_arg:
+        (nhis_df, brfss_df) = save_all_test_file(nhis_df, nhis_file_arg, csv_format, brfss_df, brfss_file_arg, json_format)
 
     transformed_nhis_df = transform_nhis_data(nhis_df)
 
@@ -221,7 +230,7 @@ if __name__ == '__main__':
     joined_df.na.drop()
 
     if output_filename_arg:
-        save_file(joined_df, output_filename_arg, csv_format)
+         save_file(joined_df, output_filename_arg, csv_format)
 
     # joined_df = create_dataframe("joined.csv", csv_format, spark)
 
